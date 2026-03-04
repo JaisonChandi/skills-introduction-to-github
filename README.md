@@ -1,47 +1,134 @@
-# Introduction to GitHub
+# 🔔 Subscription Detection System
 
-_Get started using GitHub in less than an hour._
+A full-stack web application that helps users track and manage all their ongoing app and service subscriptions in one place.
 
-## Welcome
+## Tech Stack
 
-People use GitHub to build some of the most advanced technologies in the world. Whether you’re visualizing data or building a new game, there’s a whole community and set of tools on GitHub that can help you do it even better. GitHub Skills’ “Introduction to GitHub” exercise guides you through everything you need to start contributing in less than an hour.
+| Layer     | Technology                     |
+|-----------|-------------------------------|
+| Frontend  | React 18                      |
+| Backend   | Node.js + Express             |
+| Database  | PostgreSQL                    |
 
-- **Who is this for**: New developers, new GitHub users, and students.
-- **What you'll learn**: We'll introduce repositories, branches, commits, and pull requests.
-- **What you'll build**: We'll make a short Markdown file you can use as your [profile README](https://docs.github.com/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme).
-- **Prerequisites**: None. This exercise is a great introduction for your first day on GitHub.
-- **How long**: This exercise takes less than one hour to complete.
+## Features
 
-In this exercise, you will:
+- **Dashboard** – View all subscriptions with at-a-glance statistics (total count, active count, monthly & annual spend).
+- **Add / Edit / Delete** subscriptions via a modal form.
+- **Renewal alerts** – Cards highlight subscriptions renewing within 7 days.
+- **Filter** by status: All, Active, Paused, Cancelled.
+- **Category icons** for quick visual identification (Streaming, Music, Gaming, Productivity, etc.).
+- Billing-cycle aware cost calculation (Monthly / Quarterly / Yearly).
 
-1. Create a branch
-2. Commit a file
-3. Open a pull request
-4. Merge your pull request
+## Project Structure
 
-### How to start this exercise
+```
+.
+├── backend/
+│   ├── db/
+│   │   └── schema.sql          # PostgreSQL schema
+│   ├── routes/
+│   │   └── subscriptions.js    # CRUD REST routes
+│   ├── db.js                   # PostgreSQL connection pool
+│   ├── server.js               # Express entry point
+│   ├── .env.example            # Environment variable template
+│   └── package.json
+└── frontend/
+    ├── public/
+    │   └── index.html
+    ├── src/
+    │   ├── components/
+    │   │   ├── SubscriptionCard.jsx
+    │   │   ├── SubscriptionForm.jsx
+    │   │   └── SubscriptionList.jsx
+    │   ├── services/
+    │   │   └── api.js          # Fetch-based API client
+    │   ├── App.jsx
+    │   ├── index.css
+    │   └── index.js
+    ├── .env.example
+    └── package.json
+```
 
-Simply copy the exercise to your account, then give your favorite Octocat (Mona) **about 20 seconds** to prepare the first lesson, then **refresh the page**.
+## Getting Started
 
-[![](https://img.shields.io/badge/Copy%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/new?template_owner=skills&template_name=introduction-to-github&owner=%40me&name=skills-introduction-to-github&description=Exercise:+Introduction+to+GitHub&visibility=public)
+### Prerequisites
 
-<details>
-<summary>Having trouble? 🤷</summary><br/>
+- Node.js >= 18
+- PostgreSQL >= 14
 
-When copying the exercise, we recommend the following settings:
+### 1. Database Setup
 
-- For owner, choose your personal account or an organization to host the repository.
+```bash
+# Create the database
+createdb subscription_db
 
-- We recommend creating a public repository, since private repositories will use Actions minutes.
+# Apply the schema
+psql -d subscription_db -f backend/db/schema.sql
+```
 
-If the exercise isn't ready in 20 seconds, please check the [Actions](../../actions) tab.
+### 2. Backend
 
-- Check to see if a job is running. Sometimes it simply takes a bit longer.
+```bash
+cd backend
+cp .env.example .env        # Fill in your DB credentials
+npm install
+npm run dev                 # Starts on http://localhost:5000
+```
 
-- If the page shows a failed job, please submit an issue. Nice, you found a bug! 🐛
+#### API Endpoints
 
-</details>
+| Method | Endpoint                    | Description               |
+|--------|-----------------------------|---------------------------|
+| GET    | `/api/subscriptions`        | List all subscriptions    |
+| GET    | `/api/subscriptions/:id`    | Get a single subscription |
+| POST   | `/api/subscriptions`        | Create a subscription     |
+| PUT    | `/api/subscriptions/:id`    | Update a subscription     |
+| DELETE | `/api/subscriptions/:id`    | Delete a subscription     |
+| GET    | `/health`                   | Health check              |
 
----
+#### Subscription Object
 
-&copy; 2025 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
+```json
+{
+  "name": "Netflix",
+  "category": "Streaming",
+  "cost": 15.99,
+  "billing_cycle": "Monthly",
+  "start_date": "2024-01-01",
+  "renewal_date": "2026-04-01",
+  "status": "Active",
+  "description": "Family plan"
+}
+```
+
+### 3. Frontend
+
+```bash
+cd frontend
+cp .env.example .env        # Optional: set REACT_APP_API_URL
+npm install
+npm start                   # Starts on http://localhost:3000
+```
+
+## Environment Variables
+
+### Backend (`backend/.env`)
+
+| Variable      | Default           | Description       |
+|---------------|-------------------|-------------------|
+| `PORT`        | `5000`            | Server port       |
+| `DB_HOST`     | `localhost`       | PostgreSQL host   |
+| `DB_PORT`     | `5432`            | PostgreSQL port   |
+| `DB_NAME`     | `subscription_db` | Database name     |
+| `DB_USER`     | `postgres`        | Database user     |
+| `DB_PASSWORD` | _(empty)_         | Database password |
+
+### Frontend (`frontend/.env`)
+
+| Variable            | Default                       | Description     |
+|---------------------|-------------------------------|-----------------|
+| `REACT_APP_API_URL` | `/api` (proxied to port 5000) | Backend API URL |
+
+## License
+
+[MIT](LICENSE)
