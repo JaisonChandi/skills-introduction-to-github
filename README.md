@@ -66,6 +66,26 @@ createdb subscription_db
 psql -d subscription_db -f backend/db/schema.sql
 ```
 
+### 1A. Database Setup with Docker Compose (Recommended)
+
+```bash
+# Start PostgreSQL in Docker
+docker compose up -d db
+
+# Stop PostgreSQL
+docker compose stop db
+```
+
+Notes:
+- The Compose setup uses `postgres/postgres` for username/password and creates `subscription_db` automatically.
+- `backend/db/schema.sql` is applied automatically on first startup of a fresh DB volume.
+- If you need to re-run initialization from scratch:
+
+```bash
+docker compose down -v
+docker compose up -d db
+```
+
 ### 2. Backend
 
 ```bash

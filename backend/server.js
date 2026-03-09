@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 const subscriptionsRouter = require('./routes/subscriptions');
 
 const app = express();
+app.set('trust proxy', true);
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
@@ -22,6 +23,17 @@ app.use('/api/', limiter);
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'Subscription Detection System API' });
+});
+
+// API entrypoint for browser visits to the backend base URL
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Subscription Detection System API',
+    endpoints: {
+      health: '/health',
+      subscriptions: '/api/subscriptions',
+    },
+  });
 });
 
 // Routes
